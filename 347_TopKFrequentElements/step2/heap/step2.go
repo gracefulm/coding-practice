@@ -2,18 +2,18 @@ package heap
 
 import "container/heap"
 
-type numFreq struct {
-	num  int
-	freq int
+type numFrequency struct {
+	num       int
+	frequency int
 }
 
-type minHeap []numFreq
+type minHeap []numFrequency
 
 func (h minHeap) Len() int           { return len(h) }
-func (h minHeap) Less(i, j int) bool { return h[i].freq < h[j].freq }
+func (h minHeap) Less(i, j int) bool { return h[i].frequency < h[j].frequency }
 func (h minHeap) Swap(i, j int)      { h[i], h[j] = h[j], h[i] }
 func (h *minHeap) Push(x any) {
-	*h = append(*h, x.(numFreq))
+	*h = append(*h, x.(numFrequency))
 }
 func (h *minHeap) Pop() any {
 	old := *h
@@ -39,23 +39,23 @@ func topKFrequent(nums []int, k int) []int {
 		return nil
 	}
 
-	numsFreq := make(map[int]int)
+	numToFrequency := make(map[int]int)
 	for _, num := range nums {
-		numsFreq[num]++
+		numToFrequency[num]++
 	}
 
-	mh := make(minHeap, 0, k+1)
-	for num, freq := range numsFreq {
-		heap.Push(&mh, numFreq{num: num, freq: freq})
-		if mh.Len() > k {
-			heap.Pop(&mh)
+	topKHeap := make(minHeap, 0, k+1)
+	for num, frequency := range numToFrequency {
+		heap.Push(&topKHeap, numFrequency{num: num, frequency: frequency})
+		if topKHeap.Len() > k {
+			heap.Pop(&topKHeap)
 		}
 	}
 
-	topk := make([]int, 0, mh.Len())
-	for mh.Len() > 0 {
-		topk = append(topk, heap.Pop(&mh).(numFreq).num)
+	topK := make([]int, 0, topKHeap.Len())
+	for topKHeap.Len() > 0 {
+		topK = append(topK, heap.Pop(&topKHeap).(numFrequency).num)
 	}
 
-	return topk
+	return topK
 }

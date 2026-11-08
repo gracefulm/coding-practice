@@ -15,22 +15,22 @@ func topKFrequent(nums []int, k int) []int {
 		return nil
 	}
 
-	frequency := make(map[int]int, len(nums))
-	for _, n := range nums {
-		frequency[n]++
+	numToFrequency := make(map[int]int, len(nums))
+	for _, num := range nums {
+		numToFrequency[num]++
 	}
 
-	nfs := make([]numFrequency, 0, len(frequency))
-	for n, f := range frequency {
-		nfs = append(nfs, numFrequency{num: n, frequency: f})
+	numFrequencies := make([]numFrequency, 0, len(numToFrequency))
+	for num, frequency := range numToFrequency {
+		numFrequencies = append(numFrequencies, numFrequency{num: num, frequency: frequency})
 	}
-	slices.SortFunc(nfs, func(i, j numFrequency) int {
+	slices.SortFunc(numFrequencies, func(i, j numFrequency) int {
 		return cmp.Compare(j.frequency, i.frequency)
 	})
 
 	topK := make([]int, 0, k)
-	nfs = nfs[:min(len(nfs), k)]
-	for _, nf := range nfs {
+	numFrequencies = numFrequencies[:min(len(numFrequencies), k)]
+	for _, nf := range numFrequencies {
 		topK = append(topK, nf.num)
 	}
 	return topK

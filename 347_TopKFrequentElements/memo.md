@@ -104,10 +104,45 @@
     - 計算量がO(n)になる理由と、sort版・heap版との比較
     - 同じ出現回数の値が複数ある場合の扱い
     - kが異なる値の数より大きい場合にpanicしないか
-- sort版とheap版で型名・変数名・パッケージ名が揃っていない
-  - `numFrequency`/`numFreq`、`frequency`/`numsFreq`、`package step2`/`package heap`
+- sort版とheap版でパッケージ名が揃っていない(`package step2`/`package heap`)
+  - 型名・変数名はレビュー対応で揃えた
 - テストコードを用意して、両方の実装に同じケースを流せるようにする
 
 ## Step3
 
 - min heapを使った実装で練習
+
+## レビュー対応
+
+- PR: <https://github.com/gracefulm/coding-practice/pull/9>
+
+### 変数名・型名の見直し
+
+- 指摘1: mapの変数名は`(キー)To(値)`にすると読みやすい → `numToFrequency`
+  - `frequency`だけだと、mapなのか、ある1つの値の出現回数(int)なのかが名前から分からない
+  - キーと値の両方が名前に入っていると、`numToFrequency[num]++`のように使う側のコードも読みやすい
+  - 調べたこと: map の命名は`keyToValue`以外にもある
+    - `valueByKey`(例: `frequencyByNum`)もよく使われる
+    - 用途が明らかなら`counts`や`seen`のような複数形・役割名も使われる
+    - Goの公式スタイルにmapの命名規則はなく、「スコープが狭いほど短く、広いほど説明的に」が基本
+    - どれを選ぶにしても、ファイル間・Step間で揃えるのが大事
+- 指摘2: 単語の文字を削った省略形は読み手の負担になるので、原則フルスペルにする
+  - 参考: <https://google.github.io/styleguide/cppguide.html#General_Naming_Rules>
+    - > Do not abbreviate by deleting letters within a word.
+  - API、JSONのように広く知られた略語や、`num`/`max`/`min`のようによく見るprefixは使ってよい
+  - 最終的にはチームで一般的な書き方に合わせる
+- 対応内容(Step1〜3すべて)
+
+  | 変更前 | 変更後 | 対象 |
+  |---|---|---|
+  | `frequency`/`numsFreq`/`numFreqMap` (map) | `numToFrequency` | Step1, Step2(sort/heap), Step3 |
+  | `sortedNFs`/`nfs` | `numFrequencies` | Step1, Step2(sort) |
+  | `numFreq`型、`freq`フィールド | `numFrequency`型、`frequency`フィールド | Step2(heap), Step3 |
+  | `mh` (ヒープの変数) | `topKHeap` | Step2(heap), Step3 |
+  | `topk` | `topK` | Step2(heap), Step3 |
+  | `n`, `f` (mapのrangeの変数) | `num`, `frequency` | Step1, Step2(sort), Step3 |
+  | Step3のレシーバ名`mh` | `h` | Step3 (Step2(heap)に揃えた) |
+
+  - 1行で終わる短いスコープの変数(`nf`など)やメソッドのレシーバ(`h`)は短いままにした
+    - Goではこれらを短く書くのが慣習
+  - 上のStep1/Step2のメモに出てくるコード片は、修正前の変数名のまま残している

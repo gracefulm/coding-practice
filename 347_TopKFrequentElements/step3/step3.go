@@ -2,22 +2,22 @@ package step3
 
 import "container/heap"
 
-type numFreq struct {
-	num  int
-	freq int
+type numFrequency struct {
+	num       int
+	frequency int
 }
 
-type minHeap []numFreq
+type minHeap []numFrequency
 
-func (mh minHeap) Len() int           { return len(mh) }
-func (mh minHeap) Less(i, j int) bool { return mh[i].freq < mh[j].freq }
-func (mh minHeap) Swap(i, j int)      { mh[i], mh[j] = mh[j], mh[i] }
-func (mh *minHeap) Push(x any)        { *mh = append(*mh, x.(numFreq)) }
-func (mh *minHeap) Pop() any {
-	old := *mh
+func (h minHeap) Len() int           { return len(h) }
+func (h minHeap) Less(i, j int) bool { return h[i].frequency < h[j].frequency }
+func (h minHeap) Swap(i, j int)      { h[i], h[j] = h[j], h[i] }
+func (h *minHeap) Push(x any)        { *h = append(*h, x.(numFrequency)) }
+func (h *minHeap) Pop() any {
+	old := *h
 	n := len(old)
 	x := old[n-1]
-	*mh = old[0 : n-1]
+	*h = old[0 : n-1]
 	return x
 }
 
@@ -26,23 +26,23 @@ func topKFrequent(nums []int, k int) []int {
 		return nil
 	}
 
-	numFreqMap := make(map[int]int)
+	numToFrequency := make(map[int]int)
 	for _, num := range nums {
-		numFreqMap[num]++
+		numToFrequency[num]++
 	}
 
-	mh := make(minHeap, 0, k+1)
-	for n, f := range numFreqMap {
-		heap.Push(&mh, numFreq{num: n, freq: f})
-		if mh.Len() > k {
-			heap.Pop(&mh)
+	topKHeap := make(minHeap, 0, k+1)
+	for num, frequency := range numToFrequency {
+		heap.Push(&topKHeap, numFrequency{num: num, frequency: frequency})
+		if topKHeap.Len() > k {
+			heap.Pop(&topKHeap)
 		}
 	}
 
-	topk := make([]int, 0, mh.Len())
-	for mh.Len() > 0 {
-		topk = append(topk, heap.Pop(&mh).(numFreq).num)
+	topK := make([]int, 0, topKHeap.Len())
+	for topKHeap.Len() > 0 {
+		topK = append(topK, heap.Pop(&topKHeap).(numFrequency).num)
 	}
 
-	return topk
+	return topK
 }
