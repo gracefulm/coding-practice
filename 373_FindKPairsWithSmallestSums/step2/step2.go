@@ -22,16 +22,24 @@ func (mh *minHeap) Pop() any {
 }
 
 func kSmallestPairs(nums1 []int, nums2 []int, k int) [][]int {
-	mh := make(minHeap, 0, min(len(nums1), k))
-	for i := range min(len(nums1), k) {
-		heap.Push(&mh, indexPairAndSum{i: i, j: 0, sum: nums1[i] + nums2[0]})
+	if len(nums1) == 0 || len(nums2) == 0 || k <= 0 {
+		return nil
 	}
+
+	// nums1, nums2 はソート済みなので、(i, j) より先に (i, j+1) が答えになることはない。
+	// そのため各 i について (i, 0) から始め、(i, j) を取り出したときに (i, j+1) を候補に加える。
+	initialSize := min(len(nums1), k)
+	candidates := make(minHeap, 0, initialSize)
+	for i := range initialSize {
+		heap.Push(&candidates, indexPairAndSum{i: i, j: 0, sum: nums1[i] + nums2[0]})
+	}
+
 	smallestPairs := make([][]int, 0, k)
-	for len(smallestPairs) < k && mh.Len() > 0 {
-		p := heap.Pop(&mh).(indexPairAndSum)
-		smallestPairs = append(smallestPairs, []int{nums1[p.i], nums2[p.j]})
-		if p.j+1 < len(nums2) {
-			heap.Push(&mh, indexPairAndSum{i: p.i, j: p.j + 1, sum: nums1[p.i] + nums2[p.j+1]})
+	for len(smallestPairs) < k && candidates.Len() > 0 {
+		smallest := heap.Pop(&candidates).(indexPairAndSum)
+		smallestPairs = append(smallestPairs, []int{nums1[smallest.i], nums2[smallest.j]})
+		if next := smallest.j + 1; next < len(nums2) {
+			heap.Push(&candidates, indexPairAndSum{i: smallest.i, j: next, sum: nums1[smallest.i] + nums2[next]})
 		}
 	}
 	return smallestPairs
