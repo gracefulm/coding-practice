@@ -6,3 +6,4 @@
 ## 目次
 
 - [計算量と実行時間の見積もり](complexity-and-runtime.md)
+- [Go の make と map の容量指定](go-make-and-map.md)
